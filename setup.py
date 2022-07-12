@@ -446,13 +446,13 @@ for name, data in ext_data.items():
 
 # ----------------------------------------------------------------------
 # ujson
-
-if suffix == ".pyx":
-    # undo dumb setuptools bug clobbering .pyx sources back to .c
-    for ext in extensions:
-        if ext.sources[0].endswith((".c", ".cpp")):
-            root, _ = os.path.splitext(ext.sources[0])
-            ext.sources[0] = root + suffix
+#
+# if suffix == ".pyx":
+#     # undo dumb setuptools bug clobbering .pyx sources back to .c
+#     for ext in extensions:
+#         if ext.sources[0].endswith((".c", ".cpp")):
+#             root, _ = os.path.splitext(ext.sources[0])
+#             ext.sources[0] = root + suffix
 
 # ujson_ext = Extension(
 #     "pandas._libs.json",
