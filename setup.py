@@ -9,6 +9,7 @@ BSD license. Parts are from lxml (https://github.com/lxml/lxml)
 import argparse
 import multiprocessing
 import os
+import os.path
 from os.path import join as pjoin
 import platform
 import shutil
@@ -220,8 +221,8 @@ class CheckingBuildExt(build_ext):
     """
     Subclass build_ext to get clearer report if Cython is necessary.
     """
-
-    def check_cython_extensions(self, extensions):
+    @staticmethod
+    def check_cython_extensions(extensions):
         for ext in extensions:
             for src in ext.sources:
                 if not os.path.exists(src):
@@ -246,6 +247,7 @@ class CythonCommand(build_ext):
     """
 
     def build_extension(self, ext):
+        print('CythonCommand')
         pass
 
 
@@ -316,8 +318,7 @@ if is_platform_mac():
         target_macos_version = "10.9"
         parsed_macos_version = parse_version(target_macos_version)
         if (
-            parse_version(str(python_target)) < parsed_macos_version
-            and parse_version(current_system) >= parsed_macos_version
+                parse_version(str(python_target)) < parsed_macos_version <= parse_version(current_system)
         ):
             os.environ["MACOSX_DEPLOYMENT_TARGET"] = target_macos_version
 
@@ -379,7 +380,13 @@ def maybe_cythonize(extensions, *args, **kwargs):
     parser = argparse.ArgumentParser()
     parser.add_argument("--parallel", "-j", type=int, default=1)
     parsed, _ = parser.parse_known_args()
-
+    import pandas
+    sub_paths = ['__init__.pxd', '_libs/__init__.pxd', '_libs/tslibs/__init__.pxd', ]
+    for sub_path in sub_paths:
+        full_path = os.path.join(pandas.__path__[0], sub_path)
+        if not os.path.exists(full_path):
+            with open(full_path, 'w'):
+                print(sub_path, 'created.')
     kwargs["nthreads"] = parsed.parallel
     build_ext.render_templates(_pxifiles)
     return cythonize(extensions, *args, **kwargs)
