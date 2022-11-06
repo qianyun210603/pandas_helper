@@ -94,11 +94,11 @@ scikits
 
 # Generated Sources #
 #####################
+*.c
+*.cpp
 !skts.c
 !np_datetime.c
 !np_datetime_strings.c
-*.c
-*.cpp
 
 # Unit / Performance Testing #
 ##############################
